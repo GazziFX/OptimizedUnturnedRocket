@@ -1,0 +1,8 @@
+D:\Docs\source\Plugins\Rocket\Rocket.API\obj\Release\Rocket.API.csprojAssemblyReference.cache
+D:\Docs\source\Plugins\Rocket\Rocket.API\obj\Release\Rocket.API.dll
+D:\Docs\source\Plugins\Rocket\Rocket.API\obj\Release\Rocket.API.csproj.CoreCompileInputs.cache
+D:\Docs\source\Plugins\Rocket\Rocket.API\bin\RocketAPI.XML
+D:\Docs\source\Plugins\Rocket\Rocket.API.dll
+D:\Docs\source\Plugins\Rocket\RocketAPI.XML
+D:\Docs\source\Plugins\Rocket\Release\Rocket.API.dll
+D:\Docs\source\Plugins\Rocket\Release\RocketAPI.XML
