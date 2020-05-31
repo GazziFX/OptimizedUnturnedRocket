@@ -1,7 +1,17 @@
 # Rocket.Unturned
  Fork of https://github.com/RocketMod/Rocket.Unturned
 
+# What is changed?
 
+* Most Linq expressions changed to more performant code
+* Most ignore-case string comparsions changed from ToLower() to Equals(string, StringComparison.OrdinalIgnoreCase)
+* Equals and GetHashCode overrides for UnturnedPlayer and ConsolePlayer
+* Some classes not inherited from MonoBehaviour anymore
+* Some obsolete Unturned events replaced with new
+* In-built options to Hide Plugins. Option to display the server in the browser if MaxPlayer is greater than 24 (Visual Clamp MaxPlayers to 24)
+* Better GodMode
+* Command /exp
+* Some changes from [Nelson's commits](https://github.com/SmartlyDressedGames/RocketMod/commits)
 
 # License
 
