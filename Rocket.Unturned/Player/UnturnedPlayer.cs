@@ -166,11 +166,7 @@ namespace Rocket.Unturned.Player
 
         public static UnturnedPlayer FromCSteamID(CSteamID SteamID)
         {
-            if (SteamID == Steamworks.CSteamID.Nil)
-            {
-                throw new PlayerIsConsoleException();
-            }
-            else
+            if (SteamID != Steamworks.CSteamID.Nil)
             {
                 var player = PlayerTool.getPlayer(SteamID);
                 if (player)
