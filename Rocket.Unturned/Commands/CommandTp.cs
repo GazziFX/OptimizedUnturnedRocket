@@ -58,51 +58,64 @@ namespace Rocket.Unturned.Commands
                 return; //throw new WrongUsageOfCommandException(caller, this);
             }
 
-            float? x = null;
-            float? y = null;
-            float? z = null;
-
+            string cords;
             if (command.Length == 3)
             {
-                x = command.GetFloatParameter(0);
-                y = command.GetFloatParameter(1);
-                z = command.GetFloatParameter(2);
+                var x = command.GetFloatParameter(0);
+                var y = command.GetFloatParameter(1);
+                var z = command.GetFloatParameter(2);
+                if (x != null && y != null && z != null)
+                {
+                    player.Teleport(new Vector3((float)x, (float)y, (float)z), player.Rotation);
+                    cords = (int)x + "," + (int)y + "," + (int)z;
+                    Core.Logging.Logger.Log(U.Translate("command_tp_teleport_console", player.CharacterName, cords));
+                    UnturnedChat.Say(player, U.Translate("command_tp_teleport_private", cords));
+                    return;
+                }
             }
-            if (x != null && y != null && z != null)
+            var quest = player.Player.quests;
+            if (quest.isMarkerPlaced && command[0].Equals("wp", System.StringComparison.OrdinalIgnoreCase))
             {
-                player.Teleport(new Vector3((float)x, (float)y, (float)z), MeasurementTool.angleToByte(player.Rotation));
-                Core.Logging.Logger.Log(U.Translate("command_tp_teleport_console", player.CharacterName, (float)x + "," + (float)y + "," + (float)z));
-                UnturnedChat.Say(player, U.Translate("command_tp_teleport_private", (float)x + "," + (float)y + "," + (float)z));
+                var pos = quest.markerPosition;
+                pos.y = 1024f;
+                RaycastHit raycastHit;
+                if (Physics.Raycast(pos, Vector3.down, out raycastHit, 2048f, RayMasks.WAYPOINT))
+                {
+                    pos = raycastHit.point + Vector3.up;
+                    player.Teleport(pos, player.Rotation);
+                    cords = (int)pos.x + "," + (int)pos.y + "," + (int)pos.z;
+                    Core.Logging.Logger.Log(U.Translate("command_tp_teleport_console", player.CharacterName, "Waypoint " + cords));
+                    UnturnedChat.Say(player, U.Translate("command_tp_teleport_private", cords));
+                    return;
+                }
+            }
+
+            UnturnedPlayer otherplayer = UnturnedPlayer.FromName(command[0]);
+            if (otherplayer != null && otherplayer != player)
+            {
+                player.Teleport(otherplayer);
+                Core.Logging.Logger.Log(U.Translate("command_tp_teleport_console", player.CharacterName, otherplayer.CharacterName));
+                UnturnedChat.Say(player, U.Translate("command_tp_teleport_private", otherplayer.CharacterName));
             }
             else
             {
-                UnturnedPlayer otherplayer = UnturnedPlayer.FromName(command[0]);
-                if (otherplayer != null && otherplayer != player)
+                foreach (var item in LevelNodes.nodes)
                 {
-                    player.Teleport(otherplayer);
-                    Core.Logging.Logger.Log(U.Translate("command_tp_teleport_console", player.CharacterName, otherplayer.CharacterName));
-                    UnturnedChat.Say(player, U.Translate("command_tp_teleport_private", otherplayer.CharacterName));
-                }
-                else
-                {
-                    foreach (var item in LevelNodes.nodes)
+                    if (item != null && item.type == ENodeType.LOCATION)
                     {
-                        if (item != null && item.type == ENodeType.LOCATION)
+                        var location = (LocationNode)item;
+                        if (location.name.IndexOf(command[0], System.StringComparison.OrdinalIgnoreCase) != -1)
                         {
-                            var location = (LocationNode)item;
-                            if (location.name.IndexOf(command[0], System.StringComparison.OrdinalIgnoreCase) != -1)
-                            {
-                                Vector3 c = item.point + new Vector3(0f, 0.5f, 0f);
-                                player.Teleport(c, MeasurementTool.angleToByte(player.Rotation));
-                                Core.Logging.Logger.Log(U.Translate("command_tp_teleport_console", player.CharacterName, location.name));
-                                UnturnedChat.Say(player, U.Translate("command_tp_teleport_private", location.name));
-                                return;
-                            }
+                            Vector3 c = item.point + new Vector3(0f, 0.5f, 0f);
+                            player.Teleport(c, player.Rotation);
+                            Core.Logging.Logger.Log(U.Translate("command_tp_teleport_console", player.CharacterName, location.name));
+                            UnturnedChat.Say(player, U.Translate("command_tp_teleport_private", location.name));
+                            return;
                         }
                     }
-
-                    UnturnedChat.Say(player, U.Translate("command_tp_failed_find_destination"));
                 }
+
+                UnturnedChat.Say(player, U.Translate("command_tp_failed_find_destination"));
             }
         }
     }

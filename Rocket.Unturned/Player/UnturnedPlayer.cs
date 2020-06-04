@@ -334,22 +334,23 @@ namespace Rocket.Unturned.Player
         {
             Vector3 d1 = target.player.transform.position;
             var rot = target.player.transform.rotation.eulerAngles.y;
-            Teleport(d1, MeasurementTool.angleToByte(rot));
+            Teleport(d1, rot);
         }
 
         public void Teleport(Vector3 position, float rotation)
         {
             var b = MeasurementTool.angleToByte(rotation);
-            if (VanishMode)
-            {
-                player.channel.send("askTeleport", ESteamCall.OWNER, ESteamPacket.UPDATE_RELIABLE_BUFFER, position, b);
-                player.channel.send("askTeleport", ESteamCall.NOT_OWNER, ESteamPacket.UPDATE_RELIABLE_BUFFER, Vector3.zero, b);
-            }
-            else
-            {
-                player.channel.send("askTeleport", ESteamCall.CLIENTS, ESteamPacket.UPDATE_RELIABLE_BUFFER, position, b);
-            }
             player.askTeleport(Provider.server, position, b);
+            player.channel.send("askTeleport", ESteamCall.OWNER, ESteamPacket.UPDATE_RELIABLE_INSTANT, position, b);
+            /*player.movement.channel.send("tellRecov", ESteamCall.OWNER, ESteamPacket.UPDATE_UNRELIABLE_INSTANT, new object[]
+            {
+                position,
+                player.input.recov
+            });*/
+            if (!VanishMode)
+            {
+                player.channel.send("askTeleport", ESteamCall.NOT_OWNER, ESteamPacket.UPDATE_RELIABLE_INSTANT, position, b);
+            }
         }
 
         public bool VanishMode
@@ -411,7 +412,7 @@ namespace Rocket.Unturned.Player
                     {
                         Vector3 c = item.point;
                         c.y += 0.5f;
-                        player.sendTeleport(c, MeasurementTool.angleToByte(Rotation));
+                        Teleport(c, Rotation);
                         return true;
                     }
                 }
@@ -555,7 +556,7 @@ namespace Rocket.Unturned.Player
 
         public void Heal(byte amount, bool? bleeding, bool? broken)
         {
-            player.life.askHeal(amount, bleeding != null ? bleeding.Value : player.life.isBleeding, broken != null ? broken.Value : player.life.isBroken);
+            player.life.askHeal(amount, bleeding != null && !bleeding.Value, broken != null && !broken.Value);
         }
 
         public void Suicide()
