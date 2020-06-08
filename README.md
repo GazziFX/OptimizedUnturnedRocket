@@ -11,7 +11,7 @@
 * In-built options to Hide Plugins. Option to display the server in the browser if MaxPlayer is greater than 24 (Visual Clamp MaxPlayers to 24)
 * Better GodMode
 * Commands /exp /jump /tp wp
-* Some changes from [Nelson's commits](https://github.com/SmartlyDressedGames/RocketMod/commits)
+* Some changes from [Nelson's commits](https://github.com/SmartlyDressedGames/Legally-Distinct-Missile/commits)
 
 # License
 
